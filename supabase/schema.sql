@@ -91,15 +91,7 @@ drop policy if exists "Public can read active categories" on public.business_cat
 create policy "Public can read active categories"
 on public.business_categories for select
 to anon, authenticated
-using (
-  is_active = true and exists (
-    select 1 from public.business_category_links l
-    join public.businesses b on b.id = l.business_id
-    where l.category_id = business_categories.id
-      and b.listing_status = 'published'
-      and b.verification_status = 'verified'
-  )
-);
+using (is_active = true);
 
 drop policy if exists "Public can read verified published businesses" on public.businesses;
 create policy "Public can read verified published businesses"
