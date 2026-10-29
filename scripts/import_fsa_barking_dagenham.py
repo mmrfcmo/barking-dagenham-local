@@ -22,6 +22,7 @@ from pathlib import Path
 API_URL = "https://api.ratings.food.gov.uk/Establishments"
 SOURCE_NAME = "Food Standards Agency FHRS API"
 BOROUGH = "Barking and Dagenham"
+DEFAULT_AUTHORITY_ID = 501
 PAGE_SIZE = 500
 FIELDS = [
     "name", "slug", "summary", "description", "address_line_1",
@@ -116,7 +117,7 @@ def normalise(record: dict, checked_at: str) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--limit", type=int, default=300, help="Maximum rows to stage (default: 300)")
-    parser.add_argument("--local-authority-id", type=int, default=501, help="FSA authority ID for Barking and Dagenham (official authority page: ratings.food.gov.uk/authority-search-landing/501)")
+    parser.add_argument("--local-authority-id", type=int, default=DEFAULT_AUTHORITY_ID, help="FSA authority ID for Barking and Dagenham (official authority page: ratings.food.gov.uk/authority-search-landing/501)")
     parser.add_argument("--output", default="data/imports/barking-dagenham-fsa-batch-001.csv")
     args = parser.parse_args()
     if args.limit < 1:
