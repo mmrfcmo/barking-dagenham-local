@@ -1,0 +1,78 @@
+name: Validate first business batch
+
+on:
+  push:
+    branches:
+      - feature/first-business-import-fsa
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Maximum number of FSA records to stage"
+        required: true
+        default: "300"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run importer unit tests
+        run: python -m unittest discover -s tests -p "test_import_fsa_barking_dagenham.py" -v
+      - name: Download first batch from FSA
+        run: python scripts/import_fsa_barking_dagenham.py --limit "${{ inputs.limit }}" --output data/imports/barking-dagenham-fsa-batch-001.csv
+      - name: Validate CSV quality
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          limit = int("${{ inputs.limit }}")
+          path = Path("data/imports/barking-dagenham-fsa-batch-001.csv")
+          with path.open(newline="", encoding="utf-8-sig") as f:
+              rows = list(csv.DictReader(f))
+          errors = []
+          if not rows:
+              errors.append("CSV contains no records")
+          if len(rows) > limit:
+              errors.append(f"CSV contains {len(rows)} records, over requested limit")
+          ids = [r.get("fhrs_id", "").strip() for r in rows]
+          names = [r.get("name", "").strip() for r in rows]
+          postcodes = [r.get("postcode", "").strip() for r in rows]
+          if any(not name for name in names):
+              errors.append("One or more records have no business name")
+          if any(not value for value in ids):
+              errors.append("One or more records have no FSA ID")
+          if len(ids) != len(set(ids)):
+              errors.append("Duplicate FSA IDs found")
+          if any(r.get("listing_status") != "draft" for r in rows):
+              errors.append("One or more records are not draft")
+          if any(r.get("verification_status") != "unverified" for r in rows):
+              errors.append("One or more records are not unverified")
+          if not any(postcodes):
+              errors.append("No postcodes were supplied")
+          print(f"Rows: {len(rows)}")
+          print(f"Unique FSA IDs: {len(set(ids))}")
+          print(f"Rows with postcodes: {sum(bool(p) for p in postcodes)}")
+          print("Category counts:")
+          for category in sorted({r.get("category", "") for r in rows}):
+              print(f"  {category}: {sum(r.get('category', '') == category for r in rows)}")
+          if errors:
+              for error in errors:
+                  print(f"ERROR: {error}")
+              raise SystemExit(1)
+          print("Structural checks passed. This does not independently verify that each premises is still trading.")
+          PY
+      - name: Upload review CSV
+        uses: actions/upload-artifact@v4
+        with:
+          name: barking-dagenham-fsa-batch-001
+          path: data/imports/barking-dagenham-fsa-batch-001.csv
+          if-no-files-found: error
+          retention-days: 14
