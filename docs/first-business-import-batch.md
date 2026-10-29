@@ -8,7 +8,7 @@ This import is intentionally a **staging step**, not automatic public publishing
 - Source URL, FSA ID and available hygiene-rating/date fields for traceability.
 - Every row starts with `verification_status=unverified` and `listing_status=draft`. Do not mark an owner or listing as verified merely because it appears in an official register.
 
-The FSA provides a free API and requires the `x-api-version: 2` header. See the [official API guidance](https://api.ratings.food.gov.uk/help) and [open-data page](https://ratings.food.gov.uk/open-data). The rating is a dated inspection result, not a general quality score.
+The FSA provides a free API and requires the `x-api-version: 2` header. The script defaults to authority ID `501`, matching the [official Barking and Dagenham authority page](https://ratings.food.gov.uk/authority-search-landing/501). See the [official API guidance](https://api.ratings.food.gov.uk/help) and [open-data page](https://ratings.food.gov.uk/open-data). The rating is a dated inspection result, not a general quality score.
 
 ## Run locally
 
