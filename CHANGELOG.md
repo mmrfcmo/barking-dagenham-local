@@ -1,5 +1,11 @@
 # Barking & Dagenham Local — Changelog
 
+## 2026-10-29 — First business import preparation
+- Added a repeatable staging importer for the official Food Standards Agency API.
+- Batch 001 defaults to 300 food-premises records for Barking and Dagenham.
+- Records retain source IDs/URLs and hygiene rating dates, and remain draft/unverified pending review.
+- The importer exports CSV only; it does not write to Supabase or publish listings.
+
 ## 2026-10-03 — Continuity baseline
 
 ### Added
@@ -16,4 +22,4 @@ GitHub is now the permanent source of truth. Future development phases must be t
 The previous application source was created in a temporary environment and was not committed to GitHub. That environment is no longer available. The documented functionality and architecture have therefore been captured here as a rebuild specification rather than represented as recovered source code.
 
 ### Next
-Rebuild the application foundation and previously validated directory functionality, committing each phase to GitHub before proceeding.
+Rebuild the application foundation and previously validated directory functionality, committing each completed phase to GitHub before proceeding.
