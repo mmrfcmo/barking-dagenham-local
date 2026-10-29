@@ -1,6 +1,9 @@
 name: Validate first business batch
 
 on:
+  push:
+    branches:
+      - feature/first-business-import-fsa
   workflow_dispatch:
     inputs:
       limit:
