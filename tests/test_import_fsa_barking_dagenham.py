@@ -41,7 +41,7 @@ class FsaImporterTests(unittest.TestCase):
     def test_default_authority_is_barking_and_dagenham(self):
         # The public FSA authority landing page for Barking and Dagenham uses ID 501.
         self.assertEqual(importer.BOROUGH, "Barking and Dagenham")
-        self.assertIn("authority ID for Barking and Dagenham", importer.main.__doc__ or "")
+        self.assertEqual(importer.DEFAULT_AUTHORITY_ID, 501)
 
     def test_main_writes_csv_and_does_not_publish(self):
         payload = {"establishments": [{
