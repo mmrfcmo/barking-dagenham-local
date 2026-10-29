@@ -87,7 +87,6 @@ def normalise(record: dict, checked_at: str) -> dict:
     fhrs_id = clean(record.get("FHRSID"))
     rating = clean(record.get("RatingValue"))
     rating_date = clean(record.get("RatingDate"))
-    address_parts = [v for v in (address1, address2, address3, address4, postcode) if v]
     source_url = f"https://ratings.food.gov.uk/business/{fhrs_id}" if fhrs_id else "https://ratings.food.gov.uk/"
     return {
         "name": name,
@@ -117,7 +116,7 @@ def normalise(record: dict, checked_at: str) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--limit", type=int, default=300, help="Maximum rows to stage (default: 300)")
-    parser.add_argument("--local-authority-id", type=int, default=197, help="FSA local authority ID for Barking and Dagenham")
+    parser.add_argument("--local-authority-id", type=int, default=501, help="FSA authority ID for Barking and Dagenham (official authority page: ratings.food.gov.uk/authority-search-landing/501)")
     parser.add_argument("--output", default="data/imports/barking-dagenham-fsa-batch-001.csv")
     args = parser.parse_args()
     if args.limit < 1:
